@@ -1,3 +1,22 @@
 <resources>
-    <string name="app_name">RegisterUser</string>
+    <string name="app_name">Atividade 2</string>
+
+    <string name="btn_salvar">SALVAR</string>
+    <string name="hint_name">Nome completo</string>
+    <string name="menu_buscar">Buscar</string>
+    <string name="menu_carrinho">Carrinho</string>
+    <string name="menu_config">Configurações</string>
+    <string name="menu_sobre">Sobre</string>
+    <string name="data_nascimento">Data nascimento</string>
+    <string name="sexo">Sexo</string>
+    <string name="profissao">Profissão</string>
+    <string name="estadocivil">Estado Civil</string>
+    <string name="email">Email</string>
+    <string name="senha">Senha</string>
+    <string name="repeat_senha">Repetir senha</string>
+
+    <string-array name="sexo">
+        <item>Masculino</item>
+        <item>Feminino</item>
+    </string-array>
 </resources>
