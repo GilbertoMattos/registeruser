@@ -1,7 +1,9 @@
 package br.com.gilberto.registeruser
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AppCompatActivity
@@ -11,7 +13,10 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TimePicker
+import br.com.gilberto.registeruser.model.Pessoa
 import kotlinx.android.synthetic.main.activity_main.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -36,6 +41,13 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private lateinit var spinner_estadoCivil: AppCompatSpinner
 
     private lateinit var toolbar: Toolbar
+
+    private var dataNascimento : LocalDate? = null
+
+    companion object {
+        val activity_result: Int = 99
+        val format = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +84,12 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
         btn_salvar.setOnClickListener {
             validarForm()
+
+            val pessoa = popularObjeto()
+
+            val intent = Intent(this, ResultActivity::class.java)
+            intent.putExtra("pessoa", pessoa)
+            startActivityForResult(intent, activity_result)
         }
 
         edit_data_nascimento.setOnClickListener {
@@ -85,11 +103,62 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        when (requestCode) {
+            activity_result -> {
+                if (resultCode == Activity.RESULT_OK) {
+
+                    val pessoa = data?.getSerializableExtra("PARAM_ACTIVITY2") as Pessoa
+                    println("Pessoa retorno: $pessoa")
+                    populateForm(pessoa)
+                }
+            }
+        }
+    }
+
+    private fun populateForm(pessoa: Pessoa) {
+        edit_nome_completo.setText(pessoa.nome)
+        edit_email.setText(pessoa.email)
+        edit_senha.setText(pessoa.senha)
+        edit_repete_senha.setText(pessoa.repeteSenha)
+        edit_data_nascimento.setText(format.format(pessoa.nascimento))
+        spinner_profissao.setSelection(1)
+        spinner_estadoCivil.setSelection(1)
+        spinner_sexo.setSelection(1)
+
+    }
+
+    private fun popularObjeto(): Pessoa {
+
+        return Pessoa(nome = edit_nome_completo.text.toString(),
+                nascimento = LocalDate.parse(edit_data_nascimento.text, DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH)),
+                sexo = spinner_sexo.selectedItem.toString(),
+                profissao = spinner_profissao.selectedItem.toString(),
+                estadoCivil = spinner_estadoCivil.selectedItem.toString(),
+                email = edit_email.text.toString(),
+                senha = edit_senha.text.toString(),
+                repeteSenha = edit_repete_senha.text.toString())
+    }
+
     private fun selectDate() {
+
         val c = Calendar.getInstance()
-        val mYear = c.get(Calendar.YEAR)
-        val mMonth = c.get(Calendar.MONTH)
-        val mDay = c.get(Calendar.DAY_OF_MONTH)
+        val mYear = if (dataNascimento != null) {
+            dataNascimento!!.year
+        } else {
+            c.get(Calendar.YEAR)
+        }
+        val mMonth = if (dataNascimento != null) {
+            dataNascimento!!.monthValue
+        } else {
+            c.get(Calendar.MONTH)
+        }
+        val mDay = if (dataNascimento != null) {
+            dataNascimento!!.dayOfMonth
+        } else {
+            c.get(Calendar.DAY_OF_MONTH)
+        }
 
 
         val datePickerDialog = DatePickerDialog(this,
