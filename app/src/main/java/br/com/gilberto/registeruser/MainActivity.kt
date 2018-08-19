@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
@@ -46,7 +45,6 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private lateinit var sexos: ArrayList<String>
     private lateinit var estadosCivis: ArrayList<String>
 
-    private var dataNascimento: LocalDate? = null
     private lateinit var context: Context
 
     companion object {
@@ -66,7 +64,7 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
         context = this
 
-        profissoes = arrayListOf("Selecione", "Adicionar Nova", "Desenvolvedor", "Analista", "Ator")
+        profissoes = arrayListOf("Selecione", "## Adicionar Nova ##", "Desenvolvedor", "Analista", "Ator")
         sexos = arrayListOf("Selecine", "Mascunilo", "Feminino")
         estadosCivis = arrayListOf("Selecine", "Solteiro", "Casado", "Divorciado")
 
@@ -135,11 +133,11 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         input.hint = "Informe o noma da nova profissão"
         builder.setView(input)
 
-        builder.setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener { dialog, which ->
+        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
             profissoes.add(input.text.toString())
             spinner_profissao.setSelection(profissoes.size - 1)
-        })
-        builder.setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+        }
+        builder.setNegativeButton(android.R.string.cancel) { dialog, which -> dialog.cancel() }
 
         builder.show()
     }
@@ -149,7 +147,6 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         when (requestCode) {
             activity_result -> {
                 if (resultCode == Activity.RESULT_OK) {
-
                     val pessoa = data?.getSerializableExtra("PARAM_ACTIVITY2") as Pessoa
                     println("Pessoa retorno: $pessoa")
                     populateForm(pessoa)
@@ -185,21 +182,13 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private fun selectDate() {
 
         val c = Calendar.getInstance()
-        val mYear = if (dataNascimento != null) {
-            dataNascimento!!.year
-        } else {
+        val mYear =
             c.get(Calendar.YEAR)
-        }
-        val mMonth = if (dataNascimento != null) {
-            dataNascimento!!.monthValue
-        } else {
-            c.get(Calendar.MONTH)
-        }
-        val mDay = if (dataNascimento != null) {
-            dataNascimento!!.dayOfMonth
-        } else {
-            c.get(Calendar.DAY_OF_MONTH)
-        }
+
+        val mMonth = c.get(Calendar.MONTH)
+
+        val mDay = c.get(Calendar.DAY_OF_MONTH)
+
 
 
         val datePickerDialog = DatePickerDialog(this,
@@ -230,15 +219,15 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     private fun populationSpiners() {
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, sexos)
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sexos)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner_sexo.adapter = adapter
 
-        val adapterEstadoCivil = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, estadosCivis)
+        val adapterEstadoCivil = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, estadosCivis)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner_estadoCivil.adapter = adapterEstadoCivil
 
-        val adapterProfissao = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, profissoes)
+        val adapterProfissao = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, profissoes)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner_profissao.adapter = adapterProfissao
     }
